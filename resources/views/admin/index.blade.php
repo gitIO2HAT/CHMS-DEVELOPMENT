@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div style="max-height: 80vh; overflow-y: auto;" class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Manage Users</h2>
         <a href="{{ route('admin.users.create') }}" class="btn btn-primary">

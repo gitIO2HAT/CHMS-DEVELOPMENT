@@ -99,16 +99,23 @@ class VisitorController extends Controller
     public function index(Request $request)
     {
         try {
-            $searchTerm = $request->input('search'); // Get the search term from the query string
-
+            $searchTerm = $request->input('search');
+            $gender = $request->input('gender');
+    
             $visitors = Visitor::query()
                 ->when($searchTerm, function ($query, $searchTerm) {
-                    return $query->where('first_name', 'like', '%' . $searchTerm . '%')
-                        ->orWhere('last_name', 'like', '%' . $searchTerm . '%');
+                    $query->where(function ($subQuery) use ($searchTerm) {
+                        $subQuery->where('first_name', 'like', '%' . $searchTerm . '%')
+                                 ->orWhere('last_name', 'like', '%' . $searchTerm . '%');
+                    });
                 })
+                ->when($gender, function ($query, $gender) {
+                    return $query->where('gender', $gender);
+                })
+                ->orderBy('created_at', 'desc')
                 ->get();
-
-            return view('admin.visitors', compact('visitors', 'searchTerm'));
+    
+            return view('admin.visitors', compact('visitors', 'gender'));
         } catch (\Exception $e) {
             \Log::error('Error fetching visitors: ' . $e->getMessage());
             return redirect()->route('admin.dashboard')->with('error', 'Unable to retrieve visitors.');

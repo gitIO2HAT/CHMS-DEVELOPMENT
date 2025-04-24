@@ -3,7 +3,7 @@
 @section('title', 'Visitor List')
 
 @section('content')
-    <div id="visitor-content" class="min-h-screen flex-1 flex-col items-center shadow-md transition-all duration-300 ease-in-out py-8 mt-0">
+    <div id="visitor-content" class="min-h-screen flex-1 flex-col items-center shadow-md transition-all duration-300 ease-in-out py-2 mt-0">
         <div class="max-w-6xl w-full px-6 py-6 bg-white rounded-lg shadow-md">
             <!-- Header with Visitor List and Add Visitor button -->
             <div class="flex justify-between items-center mb-6">
@@ -12,28 +12,58 @@
                     <a href="{{ route('superadmin.visitors.create') }}" class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-200">
                         Add Visitor
                     </a>
-                    <a href="javascript:void(0)" onclick="showLink()" class="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition duration-200">
+                    <button onclick="showLink()" class="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition duration-200">
                         Share Form
-                    </a>
+                    </button>
                     
-                    <form method="GET" action="{{ route('superadmin.visitors.index') }}" class="flex space-x-2">
-                        <input type="text" name="search" placeholder="Search by name..." value="{{ request()->search }}" class="p-2 border border-gray-300 rounded-md w-full">
-                        <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Search</button>
-                    </form>
+                    <form method="GET" action="{{ route('superadmin.visitors.index') }}" class="flex flex-wrap gap-2 items-center">
+                    <!-- Filter by Gender -->
+                    <select name="gender" class="p-2 border border-gray-300 rounded-md">
+                        <option value="">All Genders</option>
+                        <option value="Male" {{ request()->gender == 'Male' ? 'selected' : '' }}>Male</option>
+                        <option value="Female" {{ request()->gender == 'Female' ? 'selected' : '' }}>Female</option>
+                    </select>
+                    <!-- Search by Name -->
+                    <input type="text" name="search" placeholder="Search by name..." value="{{ request()->search }}" class="p-2 border border-gray-300 rounded-md">
+                    <!-- Submit Button -->
+                    <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Search</button>
+                </form>
                 </div>
             </div>
 
-            <!-- Success message -->
+             <!-- Floating Success Notification (positioned fixed) -->
             @if(session('success'))
-                <div class="mb-4 text-green-600 p-3 border border-green-200 rounded-md">
-                    {{ session('success') }}
+            <div id="success-notification" class="fixed top-4 right-4 z-50">
+                <div class="bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2 animate-fade-in-out">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>{{ session('success') }}</span>
                 </div>
+            </div>
             @endif
+
+            <!-- Toast Notification (hidden by default) -->
+            <div id="toast" class="fixed bottom-4 right-4 hidden">
+                <div class="bg-green-500 text-white px-4 py-2 rounded-md shadow-lg flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>Link copied to clipboard!</span>
+                </div>
+            </div>
 
             <!-- Visitor Registration Form Link -->
             <div id="visitorFormLink" class="mt-4 hidden">
-                <input type="text" id="visitorLink" value="{{ route('visitor_registration') }}" readonly class="p-2 border border-gray-300 rounded-md w-full">
-                <button onclick="copyLink()" class="mt-2 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Copy Link</button>
+                <div class="flex items-center space-x-2">
+                    <input type="text" id="visitorLink" value="{{ route('visitor_registration') }}" readonly class="p-2 border border-gray-300 rounded-md w-full">
+                    <button onclick="copyLink()" class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 flex items-center">
+                        <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+                        </svg>
+                        Copy
+                    </button>
+                </div>
             </div>
 
             <!-- Visitor Table -->
@@ -92,23 +122,61 @@
             </div>
         </div>
     </div>
+    <style>
+        /* Animation for the notification */
+        .animate-fade-in-out {
+            animation: fadeInOut 1.5s ease-in-out forwards;
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(-20px); }
+            10% { opacity: 1; transform: translateY(0); }
+            90% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-20px); }
+        }
+    </style>
 
     <script>
+        // Auto-hide success message after 2 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            const successMessage = document.getElementById('success-message');
+            if (successMessage) {
+                setTimeout(() => {
+                    successMessage.style.opacity = '0';
+                    setTimeout(() => {
+                        successMessage.remove();
+                    }, 300); // Wait for fade out before removing
+                }, 15000); // 1.5 seconds
+            }
+            
+            adjustVisitorContentPosition();
+        });
+
         // Show the visitor registration form link
         function showLink() {
-            document.getElementById('visitorFormLink').classList.remove('hidden');
+            document.getElementById('visitorFormLink').classList.toggle('hidden');
         }
 
-        // Copy the visitor form link to clipboard using Clipboard API
+        // Copy the visitor form link to clipboard
         function copyLink() {
             const copyText = document.getElementById("visitorLink");
             navigator.clipboard.writeText(copyText.value)
                 .then(() => {
-                    alert("Link copied to clipboard: " + copyText.value);
+                    showToast();
                 })
                 .catch(err => {
                     console.error("Failed to copy text: ", err);
+                    alert("Failed to copy link. Please try again.");
                 });
+        }
+
+        // Show toast notification
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
         }
 
         // Get sidebar and visitor content

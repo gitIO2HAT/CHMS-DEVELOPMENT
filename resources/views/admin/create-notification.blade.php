@@ -1,3 +1,5 @@
+@extends('layouts.app')
+
 @section('content')
 <div class="container mx-auto px-4 py-0">
     <div class="bg-white shadow-lg rounded-lg p-6 ">
@@ -10,11 +12,11 @@
 
                 <!-- Title -->
                 <div class="mb-4">
-                    <label for="notif_name" class="block text-sm font-semibold text-gray-700 mb-2">Title</label>
+                    <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">Title</label>
                     <input 
                         type="text" 
                         name="name" 
-                        id="notif_name" 
+                        id="name" 
                         value="{{ old('name') }}" 
                         class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
                         required>
@@ -25,11 +27,11 @@
 
                 <!-- Date & Time -->
                 <div class="mb-4">
-                    <label for="notif_date_time" class="block text-sm font-semibold text-gray-700 mb-2">Date & Time</label>
+                    <label for="date_time" class="block text-sm font-semibold text-gray-700 mb-2">Date & Time</label>
                     <input 
                         type="datetime-local" 
                         name="date_time" 
-                        id="notif_date_time" 
+                        id="date_time" 
                         value="{{ old('date_time') }}" 
                         class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
                         required>
@@ -40,10 +42,10 @@
 
                 <!-- Message -->
                 <div class="mb-4">
-                    <label for="notif_message" class="block text-sm font-semibold text-gray-700 mb-2">Message</label>
+                    <label for="message" class="block text-sm font-semibold text-gray-700 mb-2">Message</label>
                     <textarea 
                         name="message" 
-                        id="notif_message" 
+                        id="message" 
                         class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
                         rows="6" 
                         required>{{ old('message') }}</textarea>
@@ -74,11 +76,11 @@
                 <!-- Buttons -->
                 <div class="flex justify-between items-center">
                     <button 
-                        type="submit" 
-                        name="action" 
-                        value="post_notification"
-                        class="px-6 py-3 text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-600">
-                        Post Notification
+                    type="submit" 
+                    name="action" 
+                    value="post_notification"
+                    class="px-6 py-3 text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-600">
+                    Post Notification
                     </button>
 
                     <!-- Email Notification Button -->
@@ -86,7 +88,6 @@
                         type="button" 
                         data-bs-toggle="modal" 
                         data-bs-target="#sendEmailModal" 
-                        id="openEmailModalBtn"
                         class="px-6 py-3 text-white bg-green-600 rounded-lg shadow-md hover:bg-green-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-green-600">
                         Send Notification via Email
                     </button>
@@ -106,10 +107,10 @@
                 <div class="modal-body">
                     <form action="{{ route('admin.notifications.sendEmail') }}" method="POST">
                         @csrf
-                        <!-- Populated dynamically via JavaScript -->
-                        <input type="hidden" name="title" id="modal_title">
-                        <input type="hidden" name="message" id="modal_message">
-                        <input type="hidden" name="date_time" id="modal_date_time">
+                        <!-- Include the composed announcement details -->
+                        <input type="hidden" name="title" value="{{ old('name') }}">
+                        <input type="hidden" name="message" value="{{ old('message') }}">
+                        <input type="hidden" name="date_time" value="{{ old('date_time') }}">
 
                         <div class="mb-4">
                             <label class="block text-sm font-semibold text-gray-700 mb-2">Select Users</label>
@@ -135,20 +136,19 @@
         </div>
     </div>
 </div>
-
-<!-- JavaScript -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Select All logic
         const selectAllCheckbox = document.getElementById('select_all');
         const userCheckboxes = document.querySelectorAll('input[name="user_ids[]"]');
 
+        // Toggle all checkboxes when "Select All" is clicked
         selectAllCheckbox.addEventListener('change', function () {
             userCheckboxes.forEach(checkbox => {
                 checkbox.checked = selectAllCheckbox.checked;
             });
         });
 
+        // Uncheck "Select All" if any user checkbox is unchecked
         userCheckboxes.forEach(checkbox => {
             checkbox.addEventListener('change', function () {
                 if (!this.checked) {
@@ -156,16 +156,6 @@
                 }
             });
         });
-
-        // Populate modal fields with current form values
-        const openEmailModalBtn = document.getElementById('openEmailModalBtn');
-
-        openEmailModalBtn.addEventListener('click', function () {
-            document.getElementById('modal_title').value = document.getElementById('notif_name').value;
-            document.getElementById('modal_message').value = document.getElementById('notif_message').value;
-            document.getElementById('modal_date_time').value = document.getElementById('notif_date_time').value;
-        });
     });
 </script>
 @endsection
-

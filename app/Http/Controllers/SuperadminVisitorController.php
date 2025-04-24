@@ -11,19 +11,22 @@ class SuperadminVisitorController extends Controller
     {
         try { 
             $searchTerm = $request->input('search');
-            $ageGroup = $request->input('age_group');
+            $gender = $request->input('gender');
 
             $visitors = Visitor::query()
                 ->when($searchTerm, function ($query, $searchTerm) {
-                    return $query->where('first_name', 'like', '%' . $searchTerm . '%')
-                                ->orWhere('last_name', 'like', '%' . $searchTerm . '%');
+                    $query->where(function ($subQuery) use ($searchTerm) {
+                        $subQuery->where('first_name', 'like', '%' . $searchTerm . '%')
+                                 ->orWhere('last_name', 'like', '%' . $searchTerm . '%');
+                    });
                 })
-                ->when($ageGroup, function ($query, $ageGroup) {
-                    return $query->where('age_group', $ageGroup);
+                ->when($gender, function ($query, $gender) {
+                    return $query->where('gender', $gender);
                 })
+                ->orderBy('created_at', 'desc')
                 ->get();
 
-            return view('superadmin.visitors', compact('visitors', 'searchTerm', 'ageGroup'));
+            return view('superadmin.visitors', compact('visitors', 'gender'));
         } catch (\Exception $e) {
             \Log::error('Error fetching visitors: ' . $e->getMessage());
             return redirect()->route('superadmin.dashboard')->with('error', 'Unable to retrieve visitors.');

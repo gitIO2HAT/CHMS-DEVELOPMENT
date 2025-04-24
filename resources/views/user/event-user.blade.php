@@ -27,6 +27,9 @@
             @php
                 // Check the participation status for the current user
                 $participation = $event->participations->where('users_id', auth()->id())->first();
+                // Check if the event date has passed
+                $eventDate = \Carbon\Carbon::parse($event->date);
+                $isExpired = $eventDate->isPast();
             @endphp
 
             <div class="bg-white rounded-lg shadow-lg p-4 flex flex-col md:flex-row">
@@ -75,13 +78,23 @@
                                 </button>
                             @endif
                         @else
-                            <!-- No request yet: Allow participation -->
-                            <input type="hidden" name="events_id" value="{{ $event->id }}">
-                            <button 
-                                type="submit" 
-                                class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 mt-2">
-                                Participate
-                            </button>
+                            <!-- No request yet: Check if the event is expired or not -->
+                            @if ($isExpired)
+                                <!-- Event Expired -->
+                                <button 
+                                    type="button" 
+                                    class="bg-red-400 text-white px-4 py-2 rounded-lg cursor-not-allowed mt-2 w-full">
+                                    Event Expired ❌
+                                </button>
+                            @else
+                                <!-- Event Upcoming: Allow participation -->
+                                <input type="hidden" name="events_id" value="{{ $event->id }}">
+                                <button 
+                                    type="submit" 
+                                    class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 mt-2">
+                                    Participate
+                                </button>
+                            @endif
                         @endif
                     </form>
                 </div>

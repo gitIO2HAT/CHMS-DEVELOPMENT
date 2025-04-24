@@ -94,7 +94,7 @@
                 <!-- Empty State -->
                 <div class="col-span-full text-center py-8">
                     <p class="text-gray-600">You have no past events with approved participation.</p>
-                    <a href="{{ route('user.events') }}" class="text-purple-500 hover:text-purple-600 font-semibold mt-2">
+                    <a href="{{ route('user.event-user') }}" class="text-purple-500 hover:text-purple-600 font-semibold mt-2">
                         Explore Upcoming Events →
                     </a>
                 </div>

@@ -24,6 +24,16 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
   
     <style>
+        
+            html, body {
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .card-body {
+            max-height: 400px;
+            overflow-y: auto;
+        }
 
         body {
             font-family: 'Inter', sans-serif;
@@ -316,8 +326,8 @@
                 </div>
             </div>
 
-            <!-- Page Content -->
-            <div class="py-6">
+            <!-- Page Content -->   
+            <div class="py-6 flex-grow-1 d-flex flex-column">
                 @yield('content')
             </div>
         </div>

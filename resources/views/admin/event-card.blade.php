@@ -43,7 +43,7 @@
                 <div class="event-container flex flex-col sm:flex-row space-y-4 sm:space-x-6 p-6 border rounded-lg bg-white shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out w-full mb-6">
                     <!-- Event Image -->
                     <div class="w-full sm:w-1/3">
-                        <img alt="{{ $event->name }}" class="w-full h-72 rounded-lg object-cover"  src="{{ asset('storage/' . $event->image) }}"/>
+                        <img alt="{{ $event->name }}" class="w-full h-72 rounded-lg object-cover" src="{{ asset('storage/' . $event->image) }}"/>
                     </div>
 
                     <!-- Event Details -->
@@ -74,7 +74,6 @@
                                 <p class="text-sm text-gray-600"><i class="fas fa-calendar-day mr-2"></i>{{ \Carbon\Carbon::parse($event->date)->format('M d, Y') }}</p>
                             </div>
                             <div>
-                                <p class="text-sm text-gray-600"><i class="fas fa-clock mr-2"></i>{{ $event->time }}</p>
                                 <p class="text-sm text-gray-600"><i class="fas fa-map-marker-alt mr-2"></i>{{ $event->location }}</p>
                             </div>
                         </div>

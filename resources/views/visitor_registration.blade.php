@@ -115,6 +115,16 @@
             <h1>Register Here</h1>
             <p>Fill in the form below to register as a visitor.</p>
         </div>
+        @if(session('success'))
+        <div id="success-notification" class="fixed top-6 right-6 z-50">
+            <div class="bg-green-500 text-white px-6 py-3 rounded-lg shadow-xl flex items-center space-x-2 animate-fade-in-out">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                <span class="font-medium">{{ session('success') }}</span>
+            </div>
+        </div>
+        @endif
 
         <h2>Visitor Registration Form</h2>
 
@@ -168,7 +178,7 @@
             <div class="grid-cols-2">
                 <div>
                     <label for="age">Age</label>
-                    <input type="number" id="age" name="age" placeholder="Enter Age" value="{{ old('age') }}" required>
+                    <input type="number" id="age" name="age" placeholder="Auto-calculated" value="{{ old('age') }}" >
                 </div>
                 <div>
                     <label for="age_group">Age Group</label>
@@ -239,6 +249,54 @@
             this.querySelector('button[type="submit"]').textContent = "Submitting...";
         });
     </script>
+    <script>
+    // Auto-calculate age when birth date is selected
+    document.getElementById('birth_date').addEventListener('change', function () {
+        const birthDate = new Date(this.value);
+        const today = new Date();
+
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+
+        // Adjust if birth month hasn't occurred yet this year
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+
+        if (!isNaN(age)) {
+            document.getElementById('age').value = age;
+
+            // Set age group automatically
+            const ageGroupSelect = document.getElementById('age_group');
+            if (age <= 12) {
+                ageGroupSelect.value = 'Child(0-12)';
+            } else if (age <= 19) {
+                ageGroupSelect.value = 'Teen(13-19)';
+            } else if (age <= 29) {
+                ageGroupSelect.value = 'Young_Adult(20-29)';
+            } else if (age <= 59) {
+                ageGroupSelect.value = 'Adult(30-59)';
+            } else {
+                ageGroupSelect.value = 'Senior(60+)';
+            }
+        }
+    });
+    // Validate phone number to only allow digits and limit to 10 characters
+    function validatePhoneNumber(input) {
+        input.value = input.value.replace(/\D/g, ''); // Remove non-digit characters
+        if (input.value.length > 10) {
+            input.value = input.value.slice(0, 10); // Limit to 10 digits
+        }
+    }
+
+    // Disable submit button after click
+    document.querySelector('form').addEventListener('submit', function () {
+        const button = this.querySelector('button[type="submit"]');
+        button.disabled = true;
+        button.textContent = "Submitting...";
+    });
+</script>
+
 
 </body>
 </html>
