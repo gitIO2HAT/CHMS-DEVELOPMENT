@@ -43,7 +43,7 @@
                 <div class="event-container flex flex-col sm:flex-row space-y-4 sm:space-x-6 p-6 border rounded-lg bg-white shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out w-full mb-6">
                     <!-- Event Image -->
                     <div class="w-full sm:w-1/3">
-                        <img alt="{{ $event->name }}" class="w-full h-72 rounded-lg object-cover" src="{{ asset('storage/' . $event->image) }}"/>
+                        <img alt="{{ $event->name }}" class="w-full h-72 rounded-lg object-cover"  src="{{ asset('storage/' . $event->image) }}"/>
                     </div>
 
                     <!-- Event Details -->

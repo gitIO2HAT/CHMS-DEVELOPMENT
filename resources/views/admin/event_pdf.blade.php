@@ -93,9 +93,14 @@
     </div>
 
     <!-- Report Title -->
+    @if ($feedbacks->isNotEmpty())
     <h1>Feedback for Event: {{ $feedbacks->first()->event_name }}</h1>
+@else
+    <h1>No feedback data available for this event.</h1>
+@endif
 
-    <!-- Table for Feedback Data -->
+
+    @if ($feedbacks->isNotEmpty())
     <div class="table-container">
         <table>
             <thead>
@@ -116,6 +121,10 @@
             </tbody>
         </table>
     </div>
+@else
+    <p style="text-align:center; color: #999;">No feedback records found.</p>
+@endif
+
 
     <!-- Footer Section -->
     <div class="footer">
